@@ -1,14 +1,14 @@
-import glob
+import glob  # Used to combine .CSV files together
 import os
-import sqlite3
-import openpyxl
-import pandas as pd
+import sqlite3  # Used to create a DB of all the data
+import openpyxl  # Library for manipulating data in Excel
+import pandas as pd  # Library for manipulating data in Excel
 from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import PatternFill  # , Font, Border
 
-TEAM = 2122
+TEAM = 2122  # Place your Team number here
 
-os.chdir ('M:/EagleScout')
+os.chdir('M:/EagleScout')  # (' ./EagleScout) # Set for your system
 path = '.'
 
 # ------------------------------- Perform file Clean up -------------------------------
@@ -30,7 +30,7 @@ if os.path.exists('./Spreadsheets/Tournament.xlsx'):
 # Remove sorted combined spreadsheet
 if os.path.exists('./Spreadsheets/Combined.xlsx'):
     os.remove('./Spreadsheets/Combined.xlsx')
-    
+
 # Remove sorted combined spreadsheet
 if os.path.exists('./Spreadsheets/ScoreContrib.xlsx'):
     os.remove('./Spreadsheets/ScoreContrib.xlsx')
@@ -67,26 +67,26 @@ clearFill = PatternFill(start_color='000000', end_color='000000', fill_type='sol
 # Read in and merge all .CSV file names
 files_in_dir = [f for f in glob.glob('*.csv')]
 
-#Edit these entries for each column of data collected. These are column labels used when placing the 
-#scouted data onto the individual Team worksheets. See line 127 . These must match the content of './Config_Files/Header.txt'
-#from line 75.
+# Edit these entries for each column of data collected. These are column labels used when placing the
+# scouted data onto the individual Team worksheets. See line 127 . These must match the content of './Config_Files/Header.txt'
+# from line 79.
 StrToInt_dict = {'Team': int, 'Match_Num': int, 'Auto_Cross': int, 'Auto_Outter': int, 'Auto_Bottom': int,
                  'Tele Outter': int, 'Tele_Bottom': int, 'Rotation': int, 'Position': int, 'Climb': int, 'Level': int,
-                 'Driver_Perf': int, 'Auto_Perf': int, 'Name': str,'Comments': str , 'Point_Contrib': int}
+                 'Driver_Perf': int, 'Auto_Perf': int, 'Name': str, 'Comments': str, 'Point_Contrib': int}
 
 # Create a single combined .csv file with all data from all matches completed so far,then
 # and add column headers as labels. Don't forget to edit the Headers.txt file to match!
-d1 = pd.read_csv('./Config_Files/Header.txt')
-d1.to_csv('./Spreadsheets/combined.csv', header=True, index=False)
+d1 = pd.read_csv('./Config_Files/Header.txt')  # Read in the text file content
+d1.to_csv('./Spreadsheets/combined.csv', header=True, index=False)  # Write the text file content as headers
 
-fout = open('./Spreadsheets/combined.csv', "a")
+fout = open('./Spreadsheets/combined.csv', "a")  # Open the combined.csv file
 
 for filenames in files_in_dir:
     # df = pd.read_csv(filenames)
     fName, fExt = (os.path.splitext(filenames))
     sName = fName.split('-')
-    N = (sName[1])
-    T = (sName[0])
+    N = (sName[1])  # Match #
+    T = (sName[0])  # Team #
     # df.insert(0,N,N,True)
     # df.to_csv('./Spreadsheets/combined.csv', index_label = (sName[0]), mode = 'a')
 
@@ -94,7 +94,7 @@ for filenames in files_in_dir:
         fout.write(str(T) + ",")
         fout.write(str(N) + ",")
         fout.write(line)
-fout.close()
+fout.close()  # Close out the combined.csv file
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
