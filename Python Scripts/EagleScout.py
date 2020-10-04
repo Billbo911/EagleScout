@@ -68,7 +68,7 @@ clearFill = PatternFill(start_color='000000', end_color='000000', fill_type='sol
 files_in_dir = [f for f in glob.glob('*.csv')]
 
 # Edit these entries for each column of data collected. These are column labels used when placing the
-# scouted data onto the individual Team worksheets. See line 127 . These must match the content of './Config_Files/Header.txt'
+# scouted data onto the individual Team worksheets. See line 157 . These must match the content of './Config_Files/Header.txt'
 # from line 79.
 StrToInt_dict = {'Team': int, 'Match_Num': int, 'Auto_Cross': int, 'Auto_Outter': int, 'Auto_Bottom': int,
                  'Tele Outter': int, 'Tele_Bottom': int, 'Rotation': int, 'Position': int, 'Climb': int, 'Level': int,
@@ -102,10 +102,10 @@ fout.close()  # Close out the combined.csv file
 # Convert combined Raw csv file into one Master Raw Excel Data file
 # Then add score contribution to each entry. THIS USES PANDAS!!!
 with pd.ExcelWriter('./Spreadsheets/Combined.xlsx', engine='xlsxwriter') as writer: # Configure Pandas writer and set new file name,
-    dt = pd.read_csv('./Spreadsheets/combined.csv')  #Read into the data table the existing .csv file.
+    dt = pd.read_csv('./Spreadsheets/combined.csv')  #Read into the data frame the existing .csv file.
     rows = len(dt.index)  #Count how many rows exist
 
-    dt.to_excel(writer, sheet_name='All data', index=False) #Write the data table to sheet with the name "All data"
+    dt.to_excel(writer, sheet_name='All data', index=False) #Write the data frame to sheet with the name "All data"
     worksheet = writer.sheets['All data']
     writer.save() # Save the worksheet
 
@@ -151,14 +151,14 @@ db.to_sql("Raw_Data", con, if_exists='replace', index=False)
 #---------End of Database operations--------------------------------------------------------
 
 
-# Parse through Combined.xlsx files and append content to appropriate team worksheet.
-# Read in the file and set the values to 'int'
+# Parse through ScoreContrib.xlsx files and append content to appropriate team worksheet.
+# Read in the file and set the values to 'int'  THIS USES PANDAS
 with pd.ExcelWriter('./Spreadsheets/Master.xlsx') as writer:
-    df2 = pd.read_excel('./Spreadsheets/ScoreContrib.xlsx', converters=StrToInt_dict)
+    df2 = pd.read_excel('./Spreadsheets/ScoreContrib.xlsx', converters=StrToInt_dict) # This dictionary is defined near line 73.
     # df2 = pd.read_excel('./Spreadsheets/Combined.xlsx')
     group = df2.groupby('Team')
     for Team, Team_df in group:
-        Team_df.to_excel(writer, sheet_name=("T" + str(Team)), index=False)
+        Team_df.to_excel(writer, sheet_name=("T" + str(Team)), index=False) # The "T" allows the team number to be read as a string.
 
     writer.save()
 
