@@ -75,7 +75,7 @@ StrToInt_dict = {'Team': int, 'Match_Num': int, 'Auto_Cross': int, 'Auto_Outter'
                  'Driver_Perf': int, 'Auto_Perf': int, 'Name': str, 'Comments': str, 'Point_Contrib': int}
 
 # Create a single combined .csv file with all data from all matches completed so far,then
-# and add column headers as labels. Don't forget to edit the Headers.txt file to match!
+# and add column headers as labels. Don't forget to edit the Headers.txt file to match!  PANDAS IS USED HERE
 d1 = pd.read_csv('./Config_Files/Header.txt')  # Read in the text file content
 d1.to_csv('./Spreadsheets/combined.csv', header=True, index=False)  # Write the text file content as headers
 
@@ -100,20 +100,23 @@ fout.close()  # Close out the combined.csv file
 # ------------------------------------------------------------------------------------------
 
 # Convert combined Raw csv file into one Master Raw Excel Data file
-# Then add score contribution to each entry
-with pd.ExcelWriter('./Spreadsheets/Combined.xlsx', engine='xlsxwriter') as writer:
-    dt = pd.read_csv('./Spreadsheets/combined.csv')
-    rows = len(dt.index)
+# Then add score contribution to each entry. THIS USES PANDAS!!!
+with pd.ExcelWriter('./Spreadsheets/Combined.xlsx', engine='xlsxwriter') as writer: # Configure Pandas writer and set new file name,
+    dt = pd.read_csv('./Spreadsheets/combined.csv')  #Read into the data table the existing .csv file.
+    rows = len(dt.index)  #Count how many rows exist
 
-    dt.to_excel(writer, sheet_name='All data', index=False)
+    dt.to_excel(writer, sheet_name='All data', index=False) #Write the data table to sheet with the name "All data"
     worksheet = writer.sheets['All data']
-    writer.save()
-# --------------------Add custom calculated data--------------------------
-# --------------------Edit each year per Game Scoring---------------------    
+    writer.save() # Save the worksheet
 
-ScrCont = openpyxl.load_workbook('./Spreadsheets/Combined.xlsx', read_only=False, keep_vba=True)
+#  CUSTOMIZE FOR EACH YEAR------------------------------------------------
+# --------------------Add custom calculated data--------------------------
+# --------------------Edit each year per Game Scoring---------------------
+# In 2020 this is used for Score Contribution-----------------------------
+#  USING OPENPYXL
+ScrCont = openpyxl.load_workbook('./Spreadsheets/Combined.xlsx', read_only=False, keep_vba=True)  # Load in the Combined.xlsx workbook
 SN = ScrCont.get_sheet_by_name('All data')
-ROWS = SN.max_row
+ROWS = SN.max_row #Establish row count
 
 for i in range(2, ROWS + 1 ):  # Add Score contribution
     SC = SN.cell(row = i, column = 3).value * 5  # 5 points for moving
@@ -133,17 +136,20 @@ for i in range(2, ROWS + 1 ):  # Add Score contribution
         val = 50 # 50 points for double Hang
     elif SN.cell(row = i, column = 10).value == 4:
         val = 75 # 75 points for tripple Hang
-    
+
     SC += val
     SC += SN.cell(row = i, column = 11).value * 15 # 15 points for hang in Balance
     SN.cell(row = i , column = 16).value = SC
 
-ScrCont.save('./Spreadsheets/ScoreContrib.xlsx')
+ScrCont.save('./Spreadsheets/ScoreContrib.xlsx') #Save Score Contribution spreadsheet
+
 
 # ------------------------------------Save Raw data to Database file-----------------------
 # Save Combined.xlsx to a Database file
 db = pd.read_excel('./Spreadsheets/ScoreContrib.xlsx')
 db.to_sql("Raw_Data", con, if_exists='replace', index=False)
+#---------End of Database operations--------------------------------------------------------
+
 
 # Parse through Combined.xlsx files and append content to appropriate team worksheet.
 # Read in the file and set the values to 'int'
