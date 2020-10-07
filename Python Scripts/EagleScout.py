@@ -171,11 +171,12 @@ Teams = Data.sheet_names
 
 Tnmt = openpyxl.load_workbook('./Spreadsheets/Master.xlsx', read_only=False, keep_vba=True)
 
-# Add new worksheet for easy access to pertinant info
+# Add 2 new worksheets for easy access to pertinent info
 WS1 = Tnmt.create_sheet("Important Stuff", 0)
 WS2 = Tnmt.create_sheet("Predictions")
 
 # Add the same formulas to each team's sheet. Edit this section each year to match the game
+# NOTE: Two different cell assignment methods are used here.
 for sht in Teams:
     sn = Tnmt.get_sheet_by_name(sht)
     sn['B16'] = str('Average')
@@ -188,7 +189,7 @@ for sht in Teams:
     sn['E24'] = str('Position Ave')
     sn['E25'] = str('Climb Ave')
     sn['E26'] = str('Points Ave')
-
+# Notice the value formatting here, it is "Excel terminology"
     sn.cell(row=16, column=3).value = "=AVERAGE(C2:C13)"
     sn.cell(row=16, column=4).value = "=AVERAGE(D2:D13)"
     sn.cell(row=16, column=5).value = "=AVERAGE(E2:E13)"
@@ -242,7 +243,7 @@ for sht in Teams:
 
 C = 0
 for sht in Teams:
-    WS1.cell(row=2 + C, column=1).value = (sht[1:])
+    WS1.cell(row=2 + C, column=1).value = (sht[1:]) #Slice off the "T"
     C += 1  # Add Header info to "Important Stuff" sheet. Edit each year to match the game.
 Stuff = ['Team #', 'Average Upper',  'Average Lower','Rotation', 'Position', 'Climb','Av Point Contrib']
 s = 0
@@ -280,6 +281,8 @@ for tn in Teams:
 
     D += 1
 
+#These formatting rules just make visual changes to the data for faster identification of team performance.
+# The values in here will need to be determined by actually watching a couple tournaments and adjusting accordingly.
 SN.conditional_formatting.add('B2:B75',
                               CellIsRule(operator='greaterThan', formula=[20.1], stopIfTrue=True, fill=greenFill))
 SN.conditional_formatting.add('B2:B75',
@@ -337,7 +340,8 @@ prd.cell(row=1, column=1).value = 'Match #'
 prd.cell(row=1, column=2).value = 'Red'
 prd.cell(row=1, column=3).value = 'Blue'
 
-# ---------------------- Create Prdictions for "our" matches as defined in line 318 -------------------
+# ---------------------- Create Prdictions for "our" matches  -------------------
+# --------------This is still in development and needs fine tuning---------------
 rows = len(df2.index)
 for r in range(0, rows):
     m = df2.at[r, 'Match #']
