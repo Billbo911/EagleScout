@@ -109,7 +109,7 @@ with pd.ExcelWriter('./Spreadsheets/Combined.xlsx', engine='xlsxwriter') as writ
     worksheet = writer.sheets['All data']
     writer.save() # Save the worksheet
 
-#  CUSTOMIZE FOR EACH YEAR------------------------------------------------
+#  Todo: CUSTOMIZE FOR EACH YEAR------------------------------------------------
 # --------------------Add custom calculated data--------------------------
 # --------------------Edit each year per Game Scoring---------------------
 # In 2020 this is used for Score Contribution-----------------------------
@@ -175,6 +175,7 @@ Tnmt = openpyxl.load_workbook('./Spreadsheets/Master.xlsx', read_only=False, kee
 WS1 = Tnmt.create_sheet("Important Stuff", 0)
 WS2 = Tnmt.create_sheet("Predictions")
 
+#  Todo: CUSTOMIZE FOR EACH YEAR------------------------------------------------
 # Add the same formulas to each team's sheet. Edit this section each year to match the game
 # NOTE: Two different cell assignment methods are used here.
 for sht in Teams:
@@ -241,6 +242,7 @@ for sht in Teams:
     sn.cell(row=25, column=6).value = "=SUM(J16*1)"
     sn.cell(row=26, column=6).value = "=SUM(P16*1)"
 
+#  Todo: CUSTOMIZE FOR EACH YEAR------------------------------------------------
 C = 0
 for sht in Teams:
     WS1.cell(row=2 + C, column=1).value = (sht[1:]) #Slice off the "T"
@@ -253,6 +255,7 @@ for st in Stuff:
 
 Tnmt.save('./Spreadsheets/Temp.xlsx')
 
+#  Todo: CUSTOMIZE FOR EACH YEAR------------------------------------------------
 # Copy data from sheets and cells to where it's needed. Edit each year to match the game.
 Trnmt = openpyxl.load_workbook('./Spreadsheets/Temp.xlsx', read_only=False, keep_vba=True, data_only=False)
 
@@ -281,6 +284,7 @@ for tn in Teams:
 
     D += 1
 
+#  Todo: CUSTOMIZE FOR EACH YEAR------------------------------------------------
 #These formatting rules just make visual changes to the data for faster identification of team performance.
 # The values in here will need to be determined by actually watching a couple tournaments and adjusting accordingly.
 SN.conditional_formatting.add('B2:B75',
